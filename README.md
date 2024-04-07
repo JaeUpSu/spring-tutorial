@@ -325,9 +325,9 @@ jdbc:h2:tcp://[url]
 
 @ 스프링 테스트
 
-@SpringBootTest - 스프링 부트의 테스트 정의
-@Transactional 
-  ㄴ> 테스트 코드로 인한 db 처리를 rollback 을 해줘서 복구해줌
+- @SpringBootTest - 스프링 부트의 테스트 정의
+- @Transactional 
+   - 테스트 코드로 인한 db 처리를 rollback 을 해줘서 복구해줌
 
 
 
