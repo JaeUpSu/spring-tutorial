@@ -6,3 +6,5 @@ create table member
 );
 
 --insert into member(name) values('spring')
+
+--delete from member
