@@ -333,6 +333,126 @@ jdbc:h2:tcp://[url]
 
 
 
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+@ JDBC 
+
+JDBC API로 직접 코딩하는 것은 20년 전 이야기
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+@ JDBC Template
+
+```
+ JDBC => JDBC Template 
+  ㄴ> 반복적인 코드가 확 줄음
+```
+
+ 문제 ) SQL 은 아직 직접 사용
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+@ JPA 와 스프링 데이터 JPA
+
+- SQL 자동 처리
+    - 개발 생산성 UP
+ 
+- 객체 중심으로 설계 패러다임 전환 가능
+
+- 인터페이스가 제공되는 거임
+
+(Java ORM 표준 JPA)
+
+- 항상 service 에 @Transactional 필요
+
+- CRUD 기능 제공
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+@ 스프링 데이터 JPA
+
+- JPA 를 도와주는 도구
+
+- 인터페이스에 JpaRepository 를 사용하면 구현체를 만들어서 등록
+
+- 인터페이스 네이밍 규칙으로 SQL 
+- 페이지 기능 제공
+
+- 복잡한 동적 쿼리는 Querydsl 이라는 라이브러리 사용
+
+
+
+ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+
+@ AOP
+
+
+- 모든 메소드의 호출 시간 측정하고 싶을 때
+- 공통 관심 사항 vs 핵심 관심 사항
+- 회원 가입 시간 vs 회원 조회 시간 측정하고 싶을 때
+
+```java
+long start = System.currentTimeMillis();
+
+try {
+   	~~ 비즈니스 로직 ~~
+} finally {
+	long finish = System.currentTimeMillis();
+        long timeMs = finish - start;
+        System.out.println("join = " + timeMs);   
+}
+```
+
+- 코드 처음 데이터 호출 때는 느리기 때문에
+몇 번의 호출을 하는 웜업을 함
+
+```
+=> 시간 측정 로직을 한 곳에 모아 원하논 곳에 적용
+=> 원하는 적용 대상을 선택가능 (@Around) 
+=> AOP를 사용하면 프록시를 통해 
+    가짜 컨트롤러, 서비스, 레포지터리 등 
+    호출 후 실제를 호출  (적용한 범위만 가짜가 생김, 이를 프록시라고도 함)
+```
+
+```java
+package hello.hellospring.aop;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class TimeTraceApp {
+
+    @Around("execution(* hello.hellospring..*(..))")
+    public Object execute(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+        System.out.println("START : " + joinPoint.toString());
+        try {
+            return joinPoint.proceed();
+        } finally {
+            long finish = System.currentTimeMillis();
+            long timeMs = finish - start;
+            System.out.println("END : " + joinPoint.toString() + " " + timeMs + "ms");
+        }
+    }
+}
+```
+
+
+
+
+
+
+
 
 
 
